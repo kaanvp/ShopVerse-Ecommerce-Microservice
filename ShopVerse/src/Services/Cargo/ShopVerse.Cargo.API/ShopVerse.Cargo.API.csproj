@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShopVerse.Cargo.Application\ShopVerse.Cargo.Application.csproj" />
+    <ProjectReference Include="..\ShopVerse.Cargo.Infrastructure\ShopVerse.Cargo.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Logging\ShopVerse.Shared.Logging.csproj" />
+  </ItemGroup>
+
+</Project>

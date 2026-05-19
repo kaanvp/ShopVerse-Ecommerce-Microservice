@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # --- INFRASTRUCTURE SERVICES ---
+  shopverse.db:
+    image: postgres:15-alpine
+    container_name: shopverse.db
+
+  shopverse.redis:
+    image: redis:alpine
+    container_name: shopverse.redis
+
+  shopverse.rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: shopverse.rabbitmq
+
+  # --- MICROSERVICES ---
+  shopverse.gateway:
+    image: ${DOCKER_REGISTRY-}shopversegateway
+    build:
+      context: .
+      dockerfile: src/ApiGateway/ShopVerse.Gateway/Dockerfile
+    depends_on:
+      - shopverse.identity.api
+      - shopverse.catalog.api
+
+  shopverse.identity.api:
+    image: ${DOCKER_REGISTRY-}shopverseidentityapi
+    build:
+      context: .
+      dockerfile: src/Services/Identity/ShopVerse.Identity.API/Dockerfile
+    depends_on:
+      - shopverse.db
+
+  shopverse.catalog.api:
+    image: ${DOCKER_REGISTRY-}shopversecatalogapi
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/ShopVerse.Catalog.API/Dockerfile
+    depends_on:
+      - shopverse.db
+
+  shopverse.basket.api:
+    image: ${DOCKER_REGISTRY-}shopversebasketapi
+    build:
+      context: .
+      dockerfile: src/Services/Basket/ShopVerse.Basket.API/Dockerfile
+    depends_on:
+      - shopverse.redis
+      - shopverse.rabbitmq
+
+  shopverse.order.api:
+    image: ${DOCKER_REGISTRY-}shopverseorderapi
+    build:
+      context: .
+      dockerfile: src/Services/Order/ShopVerse.Order.API/Dockerfile
+    depends_on:
+      - shopverse.db
+      - shopverse.rabbitmq
+
+  shopverse.payment.api:
+    image: ${DOCKER_REGISTRY-}shopversepaymentapi
+    build:
+      context: .
+      dockerfile: src/Services/Payment/ShopVerse.Payment.API/Dockerfile
+    depends_on:
+      - shopverse.rabbitmq
+
+  shopverse.notification.api:
+    image: ${DOCKER_REGISTRY-}shopversenotificationapi
+    build:
+      context: .
+      dockerfile: src/Services/Notification/ShopVerse.Notification.API/Dockerfile
+    depends_on:
+      - shopverse.rabbitmq
+
+  shopverse.cargo.api:
+    image: ${DOCKER_REGISTRY-}shopversecargoapi
+    build:
+      context: .
+      dockerfile: src/Services/Cargo/ShopVerse.Cargo.API/Dockerfile
+    depends_on:
+      - shopverse.db
+      - shopverse.rabbitmq
+
+networks:
+  default:
+    name: shopverse-network
+
+volumes:
+  postgres_data:
+  redis_data:

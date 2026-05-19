@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShopVerse.Identity.Domain\ShopVerse.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Messaging\ShopVerse.Shared.Messaging.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
