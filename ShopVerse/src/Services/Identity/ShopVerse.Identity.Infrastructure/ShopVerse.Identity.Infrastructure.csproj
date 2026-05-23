@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ShopVerse.Identity.Application\ShopVerse.Identity.Application.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
   </ItemGroup>

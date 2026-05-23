@@ -1,20 +1,78 @@
 version: '3.8'
 
 services:
-  # --- INFRASTRUCTURE SERVICES ---
-  shopverse.db:
+
+  # ---------------- INFRASTRUCTURE ----------------
+
+  shopverse.dbPost:
     image: postgres:15-alpine
-    container_name: shopverse.db
+    container_name: shopverse.dbPost
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: ShopVerseDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  shopverse.dbMongo:
+    image: mongo:latest
+    container_name: shopverse.dbMongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  shopverse.dbMssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: shopverse.dbMsSql
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: YourStrong!Passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
 
   shopverse.redis:
     image: redis:alpine
     container_name: shopverse.redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
 
   shopverse.rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: shopverse.rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
-  # --- MICROSERVICES ---
+  shopverse.seq:
+    image: datalust/seq:latest
+    container_name: shopverse.seq
+    environment:
+      ACCEPT_EULA: Y
+    ports:
+      - "8081:80"
+    volumes:
+      - seq_data:/data
+
+  shopverse.jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: shopverse.jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+
+  # ---------------- MICROSERVICES ----------------
+
   shopverse.gateway:
     image: ${DOCKER_REGISTRY-}shopversegateway
     build:
@@ -30,7 +88,7 @@ services:
       context: .
       dockerfile: src/Services/Identity/ShopVerse.Identity.API/Dockerfile
     depends_on:
-      - shopverse.db
+      - shopverse.dbMssql
 
   shopverse.catalog.api:
     image: ${DOCKER_REGISTRY-}shopversecatalogapi
@@ -38,7 +96,7 @@ services:
       context: .
       dockerfile: src/Services/Catalog/ShopVerse.Catalog.API/Dockerfile
     depends_on:
-      - shopverse.db
+      - shopverse.dbMongo
 
   shopverse.basket.api:
     image: ${DOCKER_REGISTRY-}shopversebasketapi
@@ -55,7 +113,7 @@ services:
       context: .
       dockerfile: src/Services/Order/ShopVerse.Order.API/Dockerfile
     depends_on:
-      - shopverse.db
+      - shopverse.dbMssql
       - shopverse.rabbitmq
 
   shopverse.payment.api:
@@ -80,7 +138,7 @@ services:
       context: .
       dockerfile: src/Services/Cargo/ShopVerse.Cargo.API/Dockerfile
     depends_on:
-      - shopverse.db
+      - shopverse.dbPost
       - shopverse.rabbitmq
 
 networks:
@@ -90,3 +148,6 @@ networks:
 volumes:
   postgres_data:
   redis_data:
+  mssql_data:
+  mongo_data:
+  seq_data:
