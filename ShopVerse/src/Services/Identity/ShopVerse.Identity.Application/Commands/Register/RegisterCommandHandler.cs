@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using ShopVerse.Identity.Application.DTOs;
 using ShopVerse.Identity.Application.Services;
 using ShopVerse.Identity.Domain.Entity;
@@ -17,10 +18,12 @@ namespace ShopVerse.Identity.Application.Commands.Register
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        public RegisterCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService)
+        private readonly ILogger<RegisterCommandHandler> _logger;
+        public RegisterCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService, ILogger<RegisterCommandHandler> logger)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _logger = logger;
         }
 
         public async Task<Result<AuthResponseDto>> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -29,6 +32,7 @@ namespace ShopVerse.Identity.Application.Commands.Register
             var existingUser = _userManager.FindByEmailAsync(request.Email);
             if(existingUser != null)
             {
+                _logger.LogWarning("Registration attempt with already registered email: {Email}", request.Email);
                 return Result<AuthResponseDto>.Failure("Email is already registered.", 400);
             }
 
@@ -46,6 +50,7 @@ namespace ShopVerse.Identity.Application.Commands.Register
             if (!createResult.Succeeded)
             {
                 var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                _logger.LogError("User creation failed for email {Email}. Errors: {Errors}", request.Email, errors);
                 return Result<AuthResponseDto>.Failure($"User creation failed: {errors}", 400);
             }
 

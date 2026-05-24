@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ShopVerse.Identity.Application.DTOs;
 using ShopVerse.Identity.Application.Services;
 using ShopVerse.Identity.Domain.Entity;
@@ -20,11 +21,13 @@ namespace ShopVerse.Identity.Application.Commands.Login
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IdentityDbContext _context;
-        public LoginCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService, IdentityDbContext context)
+        private readonly ILogger<LoginCommandHandler> _logger;
+        public LoginCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService, IdentityDbContext context, ILogger<LoginCommandHandler> logger)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _context = context;
+            _logger = logger;
         }
         public async Task<Result<AuthResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
@@ -33,6 +36,7 @@ namespace ShopVerse.Identity.Application.Commands.Login
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
+                _logger.LogWarning("Login attempt failed for email: {Email}. User not found.", request.Email);
                 return Result<AuthResponseDto>.Failure("Invalid email or password", 401);
             }
 
@@ -40,6 +44,7 @@ namespace ShopVerse.Identity.Application.Commands.Login
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!isPasswordValid)
             {
+                _logger.LogWarning("Login attempt failed for email: {Email}. Invalid password.", request.Email);
                 return Result<AuthResponseDto>.Failure("Invalid email or password", 401);
             }
 

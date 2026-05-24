@@ -18,3 +18,4 @@ namespace ShopVerse.Identity.Domain.Entity
         public DateTime? RefreshTokenExpiry { get; set; }
         public bool? IsActive { get; set; } = true;
     }
+}

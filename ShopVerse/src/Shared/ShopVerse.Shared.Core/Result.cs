@@ -30,7 +30,7 @@ namespace ShopVerse.Shared.Core
         public static Result<T> Success(T data, int statusCode = 200) =>
             new(true, null, statusCode, data);
 
-        public static Result<T> Failure(string error, int statusCode = 400) =>
+        public static Result<T> Failure(string error, int statusCode = 400, CancellationToken cancellationToken = default) =>
             new(false, error, statusCode, default);
     }
 }

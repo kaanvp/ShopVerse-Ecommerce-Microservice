@@ -1,5 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShopVerse.Identity.Application.Commands.ChangePassword;
+using ShopVerse.Identity.Application.Commands.Login;
+using ShopVerse.Identity.Application.Commands.RefreshToken;
+using ShopVerse.Identity.Application.Commands.Register;
+using ShopVerse.Identity.Application.Queries.GetCurrentUser;
 
 namespace ShopVerse.Identity.API.Controllers
 {
@@ -7,35 +14,63 @@ namespace ShopVerse.Identity.API.Controllers
     [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        [HttpGet("/me")]
-        public async Task<Guid> GetCurrentUser()
+        private readonly ILogger<AuthController> _logger;
+        private readonly IMediator _mediator;
+
+        public AuthController(ILogger<AuthController> logger, IMediator mediator)
         {
-            return new Guid();
+            _logger = logger;
+            _mediator = mediator;
+        }
+        [Authorize]
+        [HttpGet("/me")]
+        public async Task<IActionResult> GetCurrentUser([FromBody] GetCurrentUserQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return result.IsSuccess
+           ? StatusCode(result.StatusCode, result.Data)
+           : StatusCode(result.StatusCode, new { error = result.Error });
         }
         [HttpPost("/login")]
-        public async Task<Guid> Login()
+        public async Task<IActionResult> Login([FromBody] LoginCommand command)
         {
-            return new Guid();
+            var result = await _mediator.Send(command);
+            return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Data)
+            : StatusCode(result.StatusCode, new { error = result.Error });
         }
         [HttpPost("/register")]
-        public async Task<Guid> Register()
+        public async Task<IActionResult> Register([FromBody] RegisterCommand command)
         {
-            return new Guid();
+            var result = await _mediator.Send(command);
+            return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Data)
+            : StatusCode(result.StatusCode, new { error = result.Error });
         }
+
         [HttpPost("/refresh-token")]
-        public async Task<Guid> RefreshToken()
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
         {
-            return new Guid();
+            var result = await _mediator.Send(command);
+            return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Data)
+            : StatusCode(result.StatusCode, new { error = result.Error });
         }
+        [Authorize]
         [HttpPost("/change-password")]
-        public async Task<Guid> ChangePassword()
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
         {
-            return new Guid();
+            var result = await _mediator.Send(command);
+            return result.IsSuccess
+            ? StatusCode(result.StatusCode, result.Data)
+            : StatusCode(result.StatusCode, new { error = result.Error });
         }
+        [Authorize]
         [HttpPut("/profile")]
-        public async Task<Guid> UpdateProfile()
+        public async Task<IActionResult> UpdateProfile()
         {
-            return new Guid();
+           await Task.Delay(0);
+           throw new Exception("Not implemented");
         }
         
 
