@@ -1,7 +1,7 @@
-using FluentValidation;
+ï»¿using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using ShopVerse.Identity.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -102,13 +102,13 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Veritabaný migrasyonlarýný uygula
+// VeritabanÄ± migrasyonlarÄ±nÄ± uygula
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
     dbContext.Database.Migrate();
 
-    // Seed iþlemini çalýþtýr
+    // Seed iÅŸlemini Ã§alÄ±ÅŸtÄ±r
     await IdentityDataSeeder.SeedAsync(scope.ServiceProvider);
 }
 
@@ -126,3 +126,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

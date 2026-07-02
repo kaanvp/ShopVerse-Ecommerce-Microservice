@@ -1,6 +1,7 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using ShopVerse.Identity.Domain.Entity;
 using Microsoft.Extensions.Logging;
 using ShopVerse.Identity.Application.DTOs;
 using ShopVerse.Shared.Core;
@@ -16,10 +17,10 @@ namespace ShopVerse.Identity.Application.Commands.ChangePassword
     public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Result<bool>>
     {
         private readonly ILogger<ChangePasswordCommandHandler> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ChangePasswordCommandHandler(ILogger<ChangePasswordCommandHandler> logger, UserManager<IdentityUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public ChangePasswordCommandHandler(ILogger<ChangePasswordCommandHandler> logger, UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _userManager = userManager;

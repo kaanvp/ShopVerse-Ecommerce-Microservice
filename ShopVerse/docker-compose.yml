@@ -10,7 +10,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespassword
-      POSTGRES_DB: ShopVerseDb
+      POSTGRES_DB: ShopVerseCargoDb
     ports:
       - "5432:5432"
     volumes:
@@ -59,6 +59,7 @@ services:
     environment:
       ACCEPT_EULA: Y
     ports:
+      - "5341:5341"
       - "8081:80"
     volumes:
       - seq_data:/data

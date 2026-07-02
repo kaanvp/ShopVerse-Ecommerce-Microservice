@@ -30,7 +30,7 @@ namespace ShopVerse.Identity.Application.Commands.Register
         {
             // 1. Kullanıcının daha önce kayıtlı olup olmadığını kontrol et
             var existingUser = _userManager.FindByEmailAsync(request.Email);
-            if(existingUser != null)
+            if(existingUser.Result != null)
             {
                 _logger.LogWarning("Registration attempt with already registered email: {Email}", request.Email);
                 return Result<AuthResponseDto>.Failure("Email is already registered.", 400);
@@ -79,12 +79,7 @@ namespace ShopVerse.Identity.Application.Commands.Register
 
             // 7. DTO'ları oluştur ve başarılı yanıtı dön (201 Created)
             var userDto = new UserDto(user.Id, $"{user.FirstName} {user.LastName}", user.Email!, roles);
-            var response = new AuthResponseDto
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                User = userDto
-            };
+            var response = new AuthResponseDto(accessToken, refreshToken, userDto);
             return Result<AuthResponseDto>.Success(response, 201);
         }
     }

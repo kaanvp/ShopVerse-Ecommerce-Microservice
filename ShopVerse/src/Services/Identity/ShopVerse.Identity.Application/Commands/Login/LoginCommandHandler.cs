@@ -1,6 +1,6 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 using Microsoft.Extensions.Logging;
 using ShopVerse.Identity.Application.DTOs;
 using ShopVerse.Identity.Application.Services;
@@ -20,13 +20,11 @@ namespace ShopVerse.Identity.Application.Commands.Login
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        private readonly IdentityDbContext _context;
         private readonly ILogger<LoginCommandHandler> _logger;
-        public LoginCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService, IdentityDbContext context, ILogger<LoginCommandHandler> logger)
+        public LoginCommandHandler(UserManager<AppUser> userManager, ITokenService tokenService, ILogger<LoginCommandHandler> logger)
         {
             _userManager = userManager;
             _tokenService = tokenService;
-            _context = context;
             _logger = logger;
         }
         public async Task<Result<AuthResponseDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -53,7 +51,7 @@ namespace ShopVerse.Identity.Application.Commands.Login
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
             };
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
             var identity = new ClaimsIdentity(claims);
@@ -70,12 +68,7 @@ namespace ShopVerse.Identity.Application.Commands.Login
 
             // 6. Cevap DTO'sunu Oluştur
             var userDto = new UserDto(user.Id, $"{user.FirstName} {user.LastName}", user.Email!, roles);
-            var response = new AuthResponseDto
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                User = userDto
-            };
+            var response = new AuthResponseDto(accessToken, refreshToken, userDto);
             return Result<AuthResponseDto>.Success(response, 200);
 
         }

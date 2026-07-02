@@ -55,12 +55,7 @@ namespace ShopVerse.Identity.Application.Commands.RefreshToken
             // 5. DTO oluştur ve başarılı sonucu dön
             var roles = await _userManager.GetRolesAsync(user);
             var userDto = new UserDto(user.Id, $"{user.FirstName} {user.LastName}", user.Email!, roles);
-            var response = new AuthResponseDto
-            {
-                AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken,
-                User = userDto
-            };
+            var response = new AuthResponseDto(newAccessToken, newRefreshToken, userDto);
             return Result<AuthResponseDto>.Success(response, 200);
         }
     }

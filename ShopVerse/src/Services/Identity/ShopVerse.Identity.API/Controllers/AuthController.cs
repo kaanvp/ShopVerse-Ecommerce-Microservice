@@ -24,9 +24,9 @@ namespace ShopVerse.Identity.API.Controllers
         }
         [Authorize]
         [HttpGet("/me")]
-        public async Task<IActionResult> GetCurrentUser([FromBody] GetCurrentUserQuery query)
+        public async Task<IActionResult> GetCurrentUser()
         {
-            var result = await _mediator.Send(query);
+            var result = await _mediator.Send(new GetCurrentUserQuery());
             return result.IsSuccess
            ? StatusCode(result.StatusCode, result.Data)
            : StatusCode(result.StatusCode, new { error = result.Error });
