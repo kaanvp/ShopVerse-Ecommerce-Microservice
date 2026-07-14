@@ -1,0 +1,22 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "ShopVerse.Catalog.Grpc";
+
+service CatalogGrpc {
+  rpc GetProductById (ProductRequest) returns (ProductResponse);
+}
+
+message ProductRequest {
+  string id = 1;
+}
+
+message ProductResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  int32 stock = 5;
+  string categoryId = 6;
+  string imageUrl = 7;
+  bool isActive = 8;
+}

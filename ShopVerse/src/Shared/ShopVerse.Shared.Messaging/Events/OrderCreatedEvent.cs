@@ -9,6 +9,7 @@ namespace ShopVerse.Shared.Messaging.Events
     /// <summary>
     /// Yeni bir sipariş oluşturulduğunda yayınlanan domain event'tir.
     /// Sipariş bilgilerini (OrderId, BuyerId, toplam tutar ve ürün listesi) içerir.
+    /// Ayrıca kargo oluşturma aşamasında kullanılmak üzere teslimat adresini de taşır.
     /// </summary>
     public record OrderCreatedEvent : BaseDomainEvent
 {
@@ -16,6 +17,11 @@ namespace ShopVerse.Shared.Messaging.Events
     public Guid BuyerId { get; init; }
     public decimal TotalAmount { get; init; }
     public List<OrderItemDto> Items { get; init; } = new();
+    public string ShippingAddressFullName { get; init; } = string.Empty;
+    public string ShippingCity { get; init; } = string.Empty;
+    public string ShippingDistrict { get; init; } = string.Empty;
+    public string ShippingAddressLine { get; init; } = string.Empty;
+    public string ShippingZipCode { get; init; } = string.Empty;
 }
 
 // Basit DTO tanımı (Messaging katmanında bağımsız olmalı)

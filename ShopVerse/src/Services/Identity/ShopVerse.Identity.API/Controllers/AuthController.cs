@@ -23,7 +23,7 @@ namespace ShopVerse.Identity.API.Controllers
             _mediator = mediator;
         }
         [Authorize]
-        [HttpGet("/me")]
+        [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser()
         {
             var result = await _mediator.Send(new GetCurrentUserQuery());
@@ -31,7 +31,7 @@ namespace ShopVerse.Identity.API.Controllers
            ? StatusCode(result.StatusCode, result.Data)
            : StatusCode(result.StatusCode, new { error = result.Error });
         }
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginCommand command)
         {
             var result = await _mediator.Send(command);
@@ -39,7 +39,7 @@ namespace ShopVerse.Identity.API.Controllers
             ? StatusCode(result.StatusCode, result.Data)
             : StatusCode(result.StatusCode, new { error = result.Error });
         }
-        [HttpPost("/register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterCommand command)
         {
             var result = await _mediator.Send(command);
@@ -48,7 +48,7 @@ namespace ShopVerse.Identity.API.Controllers
             : StatusCode(result.StatusCode, new { error = result.Error });
         }
 
-        [HttpPost("/refresh-token")]
+        [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenCommand command)
         {
             var result = await _mediator.Send(command);
@@ -57,7 +57,7 @@ namespace ShopVerse.Identity.API.Controllers
             : StatusCode(result.StatusCode, new { error = result.Error });
         }
         [Authorize]
-        [HttpPost("/change-password")]
+        [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommand command)
         {
             var result = await _mediator.Send(command);
@@ -66,7 +66,7 @@ namespace ShopVerse.Identity.API.Controllers
             : StatusCode(result.StatusCode, new { error = result.Error });
         }
         [Authorize]
-        [HttpPut("/profile")]
+        [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile()
         {
            await Task.Delay(0);

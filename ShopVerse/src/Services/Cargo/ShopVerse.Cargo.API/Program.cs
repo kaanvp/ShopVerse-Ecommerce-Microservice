@@ -1,4 +1,11 @@
+using Serilog;
+using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Core;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog entegrasyonu
+builder.Host.UseSharedLogging();
 
 // Add services to the container.
 
@@ -8,6 +15,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// HTTP isteklerini/yanıtlarını Serilog ile logla
+app.UseSerilogRequestLogging();
+
+// Correlation ID middleware (istek takibi)
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

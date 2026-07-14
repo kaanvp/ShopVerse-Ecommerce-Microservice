@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Serilog;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using ShopVerse.Identity.Infrastructure.Context;
@@ -10,6 +11,7 @@ using ShopVerse.Identity.Domain.Entity;
 using ShopVerse.Identity.Infrastructure.Seeder;
 using ShopVerse.Identity.Infrastructure.Services;
 using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Core;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,8 +83,8 @@ builder.Services.AddSwaggerGen(c =>
         Description = "JWT Authorization header. Example: \"Bearer {token}\"",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer"
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -101,6 +103,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// HTTP isteklerini/yanıtlarını Serilog ile logla
+app.UseSerilogRequestLogging();
+
+// Correlation ID middleware (istek takibi)
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 // Veritabanı migrasyonlarını uygula
 using (var scope = app.Services.CreateScope())

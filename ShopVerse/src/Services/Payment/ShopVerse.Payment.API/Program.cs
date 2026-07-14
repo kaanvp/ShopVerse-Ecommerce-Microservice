@@ -1,15 +1,75 @@
+// ShopVerse.Payment.API\Program.cs
+using Serilog;
+using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Core;
+using ShopVerse.Payment.Infrastructure.Consumers;
+using ShopVerse.Payment.Infrastructure.Data;
+using ShopVerse.Payment.Infrastructure.Data.Repositories;
+using ShopVerse.Payment.Infrastructure.Jobs;
+using ShopVerse.Payment.Application.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using MassTransit;
+using Hangfire;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Serilog
+builder.Host.UseSharedLogging();
+
+// DbContext — MSSQL (Order ile aynı instance)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string not found.");
+builder.Services.AddDbContext<PaymentDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// Repositories
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+// MassTransit + RabbitMQ
+builder.Services.AddMassTransit(config =>
+{
+    config.AddConsumer<ProcessPaymentConsumer>();
+
+    config.UsingRabbitMq((context, cfg) =>
+    {
+        var host = builder.Configuration.GetValue<string>("RabbitMQ:Host") ?? "localhost";
+        cfg.Host(host, "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ReceiveEndpoint("payment-process-queue", e =>
+        {
+            e.ConfigureConsumer<ProcessPaymentConsumer>(context);
+        });
+    });
+});
+
+// Hangfire
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(connectionString));
+builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Hangfire dashboard (opsiyonel)
+app.UseHangfireDashboard("/hangfire");
+
+// Recurring job — 1 dakikada bir çalışır
+RecurringJob.AddOrUpdate<PaymentTimeoutJob>(
+    "payment-timeout-job",
+    job => job.ProcessExpiredPayments(),
+    "*/1 * * * *"); // her 1 dk'da
+
+app.UseSerilogRequestLogging();
+app.UseMiddleware<CorrelationIdMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,9 +77,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

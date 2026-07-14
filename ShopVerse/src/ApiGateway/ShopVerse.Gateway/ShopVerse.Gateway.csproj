@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\ShopVerse.Shared.Logging\ShopVerse.Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,10 +1,16 @@
+using Serilog;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ShopVerse.Shared.Core;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using ShopVerse.Shared.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog entegrasyonu
+builder.Host.UseSharedLogging();
 
 // ──────────────────────────────────────────────
 // 1. JWT Authentication
@@ -72,6 +78,12 @@ var app = builder.Build();
 // ──────────────────────────────────────────────
 // Middleware Pipeline
 // ──────────────────────────────────────────────
+
+// HTTP isteklerini/yanıtlarını Serilog ile logla
+app.UseSerilogRequestLogging();
+
+// Correlation ID middleware (istek takibi)
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 // Rate Limiter (runs first — rejects early)
 app.UseRateLimiter();
