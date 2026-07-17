@@ -24,6 +24,11 @@ bld/
 
 ### Visual Studio 2015/2017/2019/2022 cache directory
 .vs/
+
+### Launch settings and HTTP test files
+Properties/launchSettings.json
+*.http
+
 # Generated DB files
 *.mdf
 *.ldf
