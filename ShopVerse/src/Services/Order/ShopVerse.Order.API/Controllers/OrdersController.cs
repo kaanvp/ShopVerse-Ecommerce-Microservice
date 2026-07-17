@@ -8,7 +8,7 @@ using ShopVerse.Order.Application.Queries.GetUserOrdersQuery;
 
 namespace ShopVerse.Order.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     [Authorize]
     public class OrdersController : ControllerBase

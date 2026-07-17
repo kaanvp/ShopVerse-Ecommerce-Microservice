@@ -16,6 +16,7 @@
     <ProjectReference Include="..\ShopVerse.Payment.Infrastructure\ShopVerse.Payment.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Logging\ShopVerse.Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Observability\ShopVerse.Shared.Observability.csproj" />
   </ItemGroup>
 
 </Project>

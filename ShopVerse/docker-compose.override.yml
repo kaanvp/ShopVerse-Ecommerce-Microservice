@@ -18,6 +18,10 @@ services:
       ACCEPT_EULA: Y
       SA_PASSWORD: YourStrong!Passw0rd
 
+  shopverse.jaeger:
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+
   # ---------------- MICROSERVICES ----------------
 
   shopverse.gateway:
@@ -25,6 +29,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
     ports:
       - "5000:8080"
 
@@ -33,6 +38,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       ConnectionStrings__DefaultConnection: "Server=shopverse.dbMssql;Database=ShopVerseIdentityDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True"
     ports:
       - "5001:8080"
@@ -42,6 +48,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       Redis__ConnectionString: shopverse.redis:6379
       MongoDbSettings__ConnectionString: "mongodb://admin:adminpassword@shopverse.dbMongo:27017?authSource=admin"
       MongoDbSettings__DatabaseName: "ShopVerseCatalogDb"
@@ -54,6 +61,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       Redis__ConnectionString: shopverse.redis:6379
       RabbitMQ__Host: shopverse.rabbitmq
     ports:
@@ -64,6 +72,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       ConnectionStrings__DefaultConnection: "Server=shopverse.dbMssql;Database=ShopVerseOrderDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True"
       RabbitMQ__Host: shopverse.rabbitmq
     ports:
@@ -74,6 +83,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       ConnectionStrings__DefaultConnection: "Server=shopverse.dbMssql;Database=ShopVersePaymentDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True"
       RabbitMQ__Host: shopverse.rabbitmq
     ports:
@@ -84,6 +94,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       MongoDbSettings__ConnectionString: "mongodb://admin:adminpassword@shopverse.dbMongo:27017?authSource=admin"
       MongoDbSettings__DatabaseName: "ShopVerseNotificationDb"
       RabbitMQ__Host: shopverse.rabbitmq
@@ -95,6 +106,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_HTTP_PORTS: 8080
       Seq__ServerUrl: http://shopverse.seq:5341
+      Otlp__Endpoint: http://shopverse.jaeger:4317
       ConnectionStrings__DefaultConnection: "Host=shopverse.dbPost;Database=ShopVerseCargoDb;Username=postgres;Password=postgrespassword"
       RabbitMQ__Host: shopverse.rabbitmq
     ports:

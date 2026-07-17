@@ -13,6 +13,7 @@ namespace ShopVerse.Shared.Messaging.Commands.Cargo
     public record CreateShipmentMessage
     {
         public Guid OrderId { get; init; }
+        public Guid BuyerId { get; init; }
         public string ShippingAddress { get; init; } = string.Empty;
         public string City { get; init; } = string.Empty;
         public string District { get; init; } = string.Empty;

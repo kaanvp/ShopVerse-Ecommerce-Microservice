@@ -88,6 +88,7 @@ namespace ShopVerse.Order.Infrastructure.Sagas
                     .SendAsync(context => context.Init<CreateShipmentMessage>(new CreateShipmentMessage
                     {
                         OrderId = context.Message.OrderId,
+                        BuyerId = context.Saga.BuyerId,
                         ShippingAddress = context.Saga.ShippingAddressLine,
                         City = context.Saga.ShippingCity,
                         District = context.Saga.ShippingDistrict,

@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="MassTransit" Version="8.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ShopVerse.Cargo.Domain\ShopVerse.Cargo.Domain.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Messaging\ShopVerse.Shared.Messaging.csproj" />

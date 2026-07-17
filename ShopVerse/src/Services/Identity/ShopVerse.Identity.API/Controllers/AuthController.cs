@@ -11,7 +11,7 @@ using ShopVerse.Identity.Application.Queries.GetCurrentUser;
 namespace ShopVerse.Identity.API.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/v1/auth")]
     public class AuthController : ControllerBase
     {
         private readonly ILogger<AuthController> _logger;

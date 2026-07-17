@@ -10,6 +10,7 @@ using ShopVerse.Catalog.Infrastructure.Services;
 using ShopVerse.Catalog.Infrastructure.Settings;
 using ShopVerse.Shared.Core;
 using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,10 @@ builder.Host.UseSharedLogging();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Catalog API", Version = "v1" });
+});
 
 // MediatR
 builder.Services.AddMediatR(cfg =>
@@ -76,6 +80,9 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
+// OpenTelemetry distributed tracing + ProblemDetails (RFC 7807)
+builder.Services.AddShopVerseTelemetry("shopverse-catalog-api");
+
 var app = builder.Build();
 
 // HTTP isteklerini/yanıtlarını Serilog ile logla
@@ -83,6 +90,9 @@ app.UseSerilogRequestLogging();
 
 // Correlation ID middleware (istek takibi)
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+// Global exception handler — RFC 7807 ProblemDetails
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

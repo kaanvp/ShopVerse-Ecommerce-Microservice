@@ -22,6 +22,7 @@
     <ProjectReference Include="..\ShopVerse.Identity.Infrastructure\ShopVerse.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Logging\ShopVerse.Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Observability\ShopVerse.Shared.Observability.csproj" />
   </ItemGroup>
 
 </Project>

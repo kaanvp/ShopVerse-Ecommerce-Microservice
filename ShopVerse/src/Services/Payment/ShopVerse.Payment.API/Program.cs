@@ -2,6 +2,7 @@
 using Serilog;
 using ShopVerse.Shared.Logging;
 using ShopVerse.Shared.Core;
+using ShopVerse.Shared.Observability;
 using ShopVerse.Payment.Infrastructure.Consumers;
 using ShopVerse.Payment.Infrastructure.Data;
 using ShopVerse.Payment.Infrastructure.Data.Repositories;
@@ -54,7 +55,13 @@ builder.Services.AddHangfireServer();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Payment API", Version = "v1" });
+});
+
+// OpenTelemetry distributed tracing + ProblemDetails (RFC 7807)
+builder.Services.AddShopVerseTelemetry("shopverse-payment-api");
 
 var app = builder.Build();
 
@@ -69,6 +76,9 @@ RecurringJob.AddOrUpdate<PaymentTimeoutJob>(
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+// Global exception handler — RFC 7807 ProblemDetails
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

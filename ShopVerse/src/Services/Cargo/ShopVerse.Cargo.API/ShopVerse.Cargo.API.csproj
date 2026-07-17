@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.3.6" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
@@ -15,6 +19,7 @@
     <ProjectReference Include="..\ShopVerse.Cargo.Infrastructure\ShopVerse.Cargo.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Logging\ShopVerse.Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Observability\ShopVerse.Shared.Observability.csproj" />
   </ItemGroup>
 
 </Project>

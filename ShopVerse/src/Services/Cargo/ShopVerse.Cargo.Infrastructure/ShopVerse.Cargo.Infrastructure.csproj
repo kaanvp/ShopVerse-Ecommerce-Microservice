@@ -1,8 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Npgsql" Version="8.0.5" />
+    <PackageReference Include="MassTransit" Version="8.3.6" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ShopVerse.Cargo.Application\ShopVerse.Cargo.Application.csproj" />
     <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Core\ShopVerse.Shared.Core.csproj" />
+    <ProjectReference Include="..\..\..\Shared\ShopVerse.Shared.Messaging\ShopVerse.Shared.Messaging.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

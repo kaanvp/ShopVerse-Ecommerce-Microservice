@@ -11,6 +11,7 @@ using ShopVerse.Notification.Infrastructure.Hubs;
 using ShopVerse.Notification.Infrastructure.Settings;
 using ShopVerse.Shared.Core;
 using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Observability;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,6 +57,7 @@ builder.Services.AddMassTransit(config =>
     config.AddConsumer<OrderCreatedConsumer>();
     config.AddConsumer<PaymentCompletedConsumer>();
     config.AddConsumer<CargoShippedConsumer>();
+    config.AddConsumer<CargoStatusUpdatedConsumer>();
 
     config.UsingRabbitMq((context, cfg) =>
     {
@@ -81,6 +83,10 @@ builder.Services.AddMassTransit(config =>
         cfg.ReceiveEndpoint("notification-cargo-shipped-queue", e =>
         {
             e.ConfigureConsumer<CargoShippedConsumer>(context);
+        });
+        cfg.ReceiveEndpoint("notification-cargo-status-updated-queue", e =>
+        {
+            e.ConfigureConsumer<CargoStatusUpdatedConsumer>(context);
         });
     });
 });
@@ -151,10 +157,16 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// OpenTelemetry distributed tracing + ProblemDetails (RFC 7807)
+builder.Services.AddShopVerseTelemetry("shopverse-notification-api");
+
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+// Global exception handler — RFC 7807 ProblemDetails
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

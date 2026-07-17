@@ -12,6 +12,7 @@ using ShopVerse.Identity.Infrastructure.Seeder;
 using ShopVerse.Identity.Infrastructure.Services;
 using ShopVerse.Shared.Logging;
 using ShopVerse.Shared.Core;
+using ShopVerse.Shared.Observability;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -102,6 +103,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddShopVerseTelemetry("shopverse-identity-api");
+
 var app = builder.Build();
 
 // HTTP isteklerini/yanıtlarını Serilog ile logla
@@ -109,6 +112,9 @@ app.UseSerilogRequestLogging();
 
 // Correlation ID middleware (istek takibi)
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+// Global exception handler — RFC 7807 ProblemDetails
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Veritabanı migrasyonlarını uygula
 using (var scope = app.Services.CreateScope())

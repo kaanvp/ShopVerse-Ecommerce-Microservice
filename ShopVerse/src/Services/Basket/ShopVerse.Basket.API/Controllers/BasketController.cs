@@ -7,7 +7,7 @@ using ShopVerse.Basket.Application.Queries;
 
 namespace ShopVerse.Basket.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     [Authorize]
     public class BasketController : ControllerBase

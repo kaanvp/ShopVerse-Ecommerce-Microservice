@@ -3,7 +3,7 @@ using ShopVerse.Payment.Application.Interfaces;
 
 namespace ShopVerse.Payment.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class PaymentController : ControllerBase
     {

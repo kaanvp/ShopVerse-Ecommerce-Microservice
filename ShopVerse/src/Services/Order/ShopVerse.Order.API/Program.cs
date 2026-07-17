@@ -13,6 +13,7 @@ using ShopVerse.Order.Infrastructure.Sagas;
 using ShopVerse.Order.Infrastructure.Services;
 using ShopVerse.Shared.Core;
 using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Observability;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -120,6 +121,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// OpenTelemetry distributed tracing + ProblemDetails (RFC 7807)
+builder.Services.AddShopVerseTelemetry("shopverse-order-api");
+
 var app = builder.Build();
 
 // HTTP isteklerini/yanıtlarını Serilog ile logla
@@ -127,6 +131,9 @@ app.UseSerilogRequestLogging();
 
 // Correlation ID middleware (istek takibi)
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+// Global exception handler — RFC 7807 ProblemDetails
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

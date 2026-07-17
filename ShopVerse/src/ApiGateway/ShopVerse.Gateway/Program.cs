@@ -6,6 +6,7 @@ using ShopVerse.Shared.Core;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 using ShopVerse.Shared.Logging;
+using ShopVerse.Shared.Observability;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,17 +74,41 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// ──────────────────────────────────────────────
+// 5. Swagger UI (Aggregated from all services)
+// ──────────────────────────────────────────────
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+// OpenTelemetry distributed tracing + ProblemDetails (RFC 7807)
+builder.Services.AddShopVerseTelemetry("shopverse-gateway");
+
 var app = builder.Build();
 
 // ──────────────────────────────────────────────
 // Middleware Pipeline
 // ──────────────────────────────────────────────
 
+// Swagger UI — aggregated view of all downstream services
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/identity/swagger/v1/swagger.json", "Identity API v1");
+    c.SwaggerEndpoint("/swagger/catalog/swagger/v1/swagger.json", "Catalog API v1");
+    c.SwaggerEndpoint("/swagger/basket/swagger/v1/swagger.json", "Basket API v1");
+    c.SwaggerEndpoint("/swagger/order/swagger/v1/swagger.json", "Order API v1");
+    c.SwaggerEndpoint("/swagger/payment/swagger/v1/swagger.json", "Payment API v1");
+    c.SwaggerEndpoint("/swagger/notification/swagger/v1/swagger.json", "Notification API v1");
+    c.SwaggerEndpoint("/swagger/cargo/swagger/v1/swagger.json", "Cargo API v1");
+});
+
 // HTTP isteklerini/yanıtlarını Serilog ile logla
 app.UseSerilogRequestLogging();
 
 // Correlation ID middleware (istek takibi)
 app.UseMiddleware<CorrelationIdMiddleware>();
+
+// Global exception handler — RFC 7807 ProblemDetails
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 // Rate Limiter (runs first — rejects early)
 app.UseRateLimiter();
