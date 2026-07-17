@@ -60,3 +60,4 @@ publish/
 # backup and restore templates
 *.nuget.props
 *.nuget.targets
+*.Backup.tmp
